@@ -3,14 +3,21 @@ name = "hexlet-code"
 version = "0.1.0"
 description = ""
 authors = ["alinali87 <alinali87@gmail.com>"]
+packages = [
+    { include = "gendiff" },
+]
 
 [tool.poetry.dependencies]
 python = "^3.9"
+argparse = "^1.4.0"
 
 [tool.poetry.scripts]
-gendiff = "brain_games.scripts.brain_games:main"
+gendiff = "gendiff.scripts.gendiff:main"
 
 [tool.poetry.dev-dependencies]
+
+[tool.poetry.group.dev.dependencies]
+flake8 = "^7.1.0"
 
 [build-system]
 requires = ["poetry-core>=1.0.0"]
