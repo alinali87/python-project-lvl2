@@ -49,4 +49,3 @@ def generate_diff(filepath1: str, filepath2: str) -> str:
         formatted_list.append(f"  {sign} {key}: {value}")
     formatted_list.append("}")
     return "\n".join(formatted_list)
-
