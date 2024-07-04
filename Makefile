@@ -22,4 +22,4 @@ gendiff-test:
 gendiff:
 	poetry run gendiff
 
-.PHONY
+.PHONY: install build publish package-install package-reinstall lint gendiff gendiff-test
