@@ -18,3 +18,8 @@ lint:
 
 gendiff-test:
 	poetry run gendiff --help
+
+gendiff:
+	poetry run gendiff
+
+.PHONY
