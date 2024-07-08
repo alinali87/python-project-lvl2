@@ -29,6 +29,6 @@ check:
 	make test && make lint
 
 test-coverage:
-	poetry run pytest --cov=hexlet-code --cov-report xml
+	poetry run pytest --cov=. --cov-report xml
 
 .PHONY: install build publish package-install package-reinstall lint gendiff gendiff-test test check
