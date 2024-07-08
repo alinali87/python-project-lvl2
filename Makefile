@@ -22,4 +22,10 @@ gendiff-test:
 gendiff:
 	poetry run gendiff
 
-.PHONY: install build publish package-install package-reinstall lint gendiff gendiff-test
+test:
+	poetry run python3 -m pytest tests
+
+check:
+	make test && make lint
+
+.PHONY: install build publish package-install package-reinstall lint gendiff gendiff-test test check
