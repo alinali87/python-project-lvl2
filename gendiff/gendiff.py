@@ -1,30 +1,8 @@
-import json
+from gendiff.json_helpers import read_json
+from gendiff.yml_helpers import read_yml
 
 
-def generate_diff(filepath1: str, filepath2: str) -> str:
-    """ Generate difference between two json-files
-
-    Args:
-        filepath1: path to the first file
-        filepath2: path to the second file
-    Returns:
-        str: difference between two files, e.g.
-        {
-          - follow: false
-            host: hexlet.io
-          - proxy: 123.234.53.22
-          - timeout: 50
-          + timeout: 20
-          + verbose: true
-        }
-        where "-" means the key is missing in the 2d file,
-                "+" means the key is missing in the 1st file,
-                no sign means that both files have the same value
-    """
-    with open(filepath1) as fh1:
-        data1 = json.load(fh1)
-    with open(filepath2) as fh2:
-        data2 = json.load(fh2)
+def diff_data(data1, data2) -> str:
     # ASSUME: all the keys are unique in a file
     all_keys = set(data1.keys()) | set(data2.keys())
     pre = []
@@ -49,3 +27,30 @@ def generate_diff(filepath1: str, filepath2: str) -> str:
         formatted_list.append(f"  {sign} {key}: {value}")
     formatted_list.append("}")
     return "\n".join(formatted_list)
+
+
+def generate_diff(filepath1: str, filepath2: str) -> str:
+    """ Generate difference between two json-files
+
+    Args:
+        filepath1: path to the first file
+        filepath2: path to the second file
+    Returns:
+        str: difference between two files, e.g.
+        {
+          - follow: false
+            host: hexlet.io
+          - proxy: 123.234.53.22
+          - timeout: 50
+          + timeout: 20
+          + verbose: true
+        }
+        where "-" means the key is missing in the 2d file,
+                "+" means the key is missing in the 1st file,
+                no sign means that both files have the same value
+    """
+    if filepath1.endswith(".json") and filepath2.endswith(".json"):
+        return diff_data(*read_json(filepath1, filepath2))
+
+    if filepath1.endswith((".yml", ".yaml")) and filepath2.endswith((".yml", ".yaml")):
+        return diff_data(*read_yml(filepath1, filepath2))
