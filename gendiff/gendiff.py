@@ -52,5 +52,6 @@ def generate_diff(filepath1: str, filepath2: str) -> str:
     if filepath1.endswith(".json") and filepath2.endswith(".json"):
         return diff_data(*read_json(filepath1, filepath2))
 
-    if filepath1.endswith((".yml", ".yaml")) and filepath2.endswith((".yml", ".yaml")):
+    if filepath1.endswith((".yml", ".yaml")) \
+            and filepath2.endswith((".yml", ".yaml")):
         return diff_data(*read_yml(filepath1, filepath2))
