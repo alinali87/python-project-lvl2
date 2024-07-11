@@ -2,31 +2,88 @@ from gendiff.json_helpers import read_json
 from gendiff.yml_helpers import read_yml
 
 
-def diff_data(data1, data2) -> str:
-    # ASSUME: all the keys are unique in a file
-    all_keys = set(data1.keys()) | set(data2.keys())
-    pre = []
-    for key in all_keys:
-        # only in data2
-        if key not in data1.keys():
-            pre.append((key, 1, data2[key], "+"))
-        # only in data1
-        elif key not in data2.keys():
-            pre.append((key, -1, data1[key], "-"))
-        # key in in both and values are equal
-        elif data1[key] == data2[key]:
-            pre.append((key, 0, data1[key], " "))
-        # values are different
-        else:
-            pre.append((key, -1, data1[key], "-"))
-            pre.append((key, 1, data2[key], "+"))
-    pre.sort()
-    formatted_list = ["{"]
-    for key, int_sign, value, sign in pre:
-        # TODO: got False instead of false.
-        formatted_list.append(f"  {sign} {key}: {value}")
-    formatted_list.append("}")
-    return "\n".join(formatted_list)
+# return diff_ast: TODO: clean up
+# (key, -1, value) -> data is only in 1st file
+# (key, 0, value) -> data is identical in both
+# (key, 1, value) -> data is only in 2d file
+def diff_data(data1: dict, data2: dict) -> dict:
+    def _inner_keys_to_tuples(d):
+        """ Convert all keys in a dictionary to (k, 0) tuples """
+        if not isinstance(d, dict):
+            return d
+        new_d = {}
+        for k, v in d.items():
+            v = _inner_keys_to_tuples(v)
+            new_d[(k, 0)] = v
+        return new_d
+
+    def _inner_diff(data1: dict, data2: dict, acc: dict = {}):
+        all_keys = set(data1.keys()) | set(data2.keys())
+        for key in all_keys:
+            # only in data2
+            if key not in data1.keys():
+                acc[(key, 1)] = _inner_keys_to_tuples(data2[key])
+            # only in data1
+            elif key not in data2.keys():
+                acc[(key, -1)] = _inner_keys_to_tuples(data1[key])
+            # key in both and values are equal
+            elif data1[key] == data2[key]:
+                acc[(key, 0)] = _inner_keys_to_tuples(data1[key])
+            # values are different
+            else:
+                if isinstance(data1[key], dict) and isinstance(data2[key], dict):
+                    acc[(key, 0)] = diff_data(data1[key], data2[key])
+                else:
+                    acc[(key, -1)] = _inner_keys_to_tuples(data1[key])
+                    acc[(key, 1)] = _inner_keys_to_tuples(data2[key])
+        return acc
+
+    return _inner_diff(data1, data2)
+
+
+def stylish(data, replacer: str = " ", count: int = 4) -> str:
+    """ Produce formatted diff as a string
+
+    Args:
+        data: diff between two files to be formatted
+        replacer: element to indent nested levels
+        count: number of replacers for indentation
+    Return:
+        formatted string
+    """
+    def _inner(data, level: int = 1):
+        if not isinstance(data, dict):
+            if isinstance(data, bool):
+                return 'true' if data else 'false'
+            if data is None:
+                return 'null'
+            return str(data)
+        formatted_list = ["{"]
+        for k, v in sorted(data.items()):
+            key, flag = k
+            sign = {-1: "-", 0: " ", 1: "+"}[flag]
+            value = _inner(v, level + 1)
+            if value:
+                formatted_list.append(replacer * (count * level - 2) + sign + " " + str(key) + ": " + value)
+            else:
+                formatted_list.append(replacer * (count * level - 2) + sign + " " + str(key) + ":")
+        formatted_list.append(replacer * count * (level - 1) + "}")
+        return "\n".join(formatted_list)
+
+    return _inner(data)
+
+
+def _stringify(value, replacer: str = " ", spaces_count: int = 1):
+    def inner_stringify(value, level: int = 1):
+        if not isinstance(value, dict):
+            return str(value)
+        pre = ["{"]
+        for k, v in value.items():
+            pre.append(replacer * spaces_count * level + str(k) + ": " + inner_stringify(v, level + 1))
+        pre.append(replacer * spaces_count * (level - 1) + "}")
+        return "\n".join(pre)
+
+    return inner_stringify(value)
 
 
 def generate_diff(filepath1: str, filepath2: str) -> str:
@@ -50,8 +107,10 @@ def generate_diff(filepath1: str, filepath2: str) -> str:
                 no sign means that both files have the same value
     """
     if filepath1.endswith(".json") and filepath2.endswith(".json"):
-        return diff_data(*read_json(filepath1, filepath2))
+        diff = diff_data(*read_json(filepath1, filepath2))
+        print(diff)
+        return stylish(diff_data(*read_json(filepath1, filepath2)))
 
     if filepath1.endswith((".yml", ".yaml")) \
             and filepath2.endswith((".yml", ".yaml")):
-        return diff_data(*read_yml(filepath1, filepath2))
+        return stylish(diff_data(*read_yml(filepath1, filepath2)))
