@@ -1,4 +1,6 @@
-from gendiff import generate_diff, diff_data, stylish
+from gendiff import generate_diff, diff_data
+from gendiff.formatters.stylish import stylish
+from gendiff.formatters.plain import plain
 import pytest
 import json
 
@@ -91,19 +93,11 @@ def test_stylish(data, replacer, count, expected):
     assert output == expected
 
 
-# TODO: clean up
-def test_temporary():
-    def _inner_keys_to_tuples(d):
-        """ Convert all keys in a dictionary to (k, 0) tuples """
-        if not isinstance(d, dict):
-            return d
-        new_d = {}
-        for k, v in d.items():
-            v = _inner_keys_to_tuples(v)
-            new_d[(k, 0)] = v
-        return new_d
+with open("data/nested/expected_plain_diff.txt") as fh:
+    expected_plain_diff = fh.read()
 
-    d = {"a": 1}
-    assert _inner_keys_to_tuples(d) == {("a", 0): 1}
-    d2 = {"a": {"b": {1: 12345}}}
-    assert _inner_keys_to_tuples(d2) == {("a", 0): {("b", 0): {(1, 0): 12345}}}
+
+@pytest.mark.parametrize("data, expected", [(expected_diff, expected_plain_diff)])
+def test_plain(data, expected):
+    output = plain(expected_diff)
+    assert output == expected_plain_diff
