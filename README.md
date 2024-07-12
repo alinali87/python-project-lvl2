@@ -8,4 +8,5 @@
 #### Compare two files
 [![JSON flat](https://asciinema.org/a/nixVrR78lEYLD2QXKqx1gHnje.svg)](https://asciinema.org/a/nixVrR78lEYLD2QXKqx1gHnje)
 [![JSON and YML flat](https://asciinema.org/a/xdAS1nv5WC1xzz7HSBHWlkeKW.svg)](https://asciinema.org/a/xdAS1nv5WC1xzz7HSBHWlkeKW)
+[![JSON with stylish format](https://asciinema.org/a/sjor22az20WfiYNsQYpIi9qGS.svg)](https://asciinema.org/a/sjor22az20WfiYNsQYpIi9qGS)
 
