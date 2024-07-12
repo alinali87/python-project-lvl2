@@ -1,6 +1,6 @@
 from gendiff import generate_diff, diff_data
-from gendiff.formatters.stylish import stylish
-from gendiff.formatters.plain import plain
+from gendiff.formatters.format_stylish import format_stylish
+from gendiff.formatters.format_plain import format_plain
 import pytest
 import json
 
@@ -89,7 +89,7 @@ expected2 = "{\n  - a: {\n        aaa: 123\n    }\n  + b: true\n}"
 
 @pytest.mark.parametrize("data, replacer, count, expected", [(diff1, " ", 2, expected1), (diff2, " ", 4, expected2)])
 def test_stylish(data, replacer, count, expected):
-    output = stylish(data, replacer, count)
+    output = format_stylish(data, replacer, count)
     assert output == expected
 
 
@@ -99,5 +99,5 @@ with open("data/nested/expected_plain_diff.txt") as fh:
 
 @pytest.mark.parametrize("data, expected", [(expected_diff, expected_plain_diff)])
 def test_plain(data, expected):
-    output = plain(expected_diff)
+    output = format_plain(expected_diff)
     assert output == expected_plain_diff

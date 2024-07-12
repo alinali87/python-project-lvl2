@@ -15,7 +15,7 @@ def _format_value(value) -> str:
     return value
 
 
-def plain(data: dict) -> str:
+def format_plain(data: dict) -> str:
     """ Produce formatted data as a string
 
     Args:

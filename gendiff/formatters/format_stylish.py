@@ -1,4 +1,4 @@
-def stylish(data, replacer: str = " ", count: int = 4) -> str:
+def format_stylish(data, replacer: str = " ", count: int = 4) -> str:
     """ Produce formatted diff as a string
 
     Args:

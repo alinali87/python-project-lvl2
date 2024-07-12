@@ -1,7 +1,7 @@
 from gendiff.json_helpers import read_json
 from gendiff.yml_helpers import read_yml
-from gendiff.formatters.stylish import stylish
-from gendiff.formatters.plain import plain
+from gendiff.formatters.format_stylish import format_stylish
+from gendiff.formatters.format_plain import format_plain
 
 
 def diff_data(data1: dict, data2: dict) -> dict:
@@ -80,8 +80,9 @@ def generate_diff(filepath1: str, filepath2: str, format: str = "stylish") -> st
         diff = diff_data(*read_yml(filepath1, filepath2))
 
     formatters = {
-        "stylish": stylish,
-        "plain": plain,
+        "stylish": format_stylish,
+        "plain": format_plain,
+        # "json": format_json,
     }
     if format not in formatters:
         raise NotImplementedError(f"Format '{format}' does not exist")
