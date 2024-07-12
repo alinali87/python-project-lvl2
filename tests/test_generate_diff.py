@@ -1,8 +1,9 @@
+import json
+import pytest
 from gendiff import generate_diff, diff_data
 from gendiff.formatters.format_stylish import format_stylish
 from gendiff.formatters.format_plain import format_plain
-import pytest
-import json
+from gendiff.formatters.format_json import format_json
 
 
 test_cases = [("data/flat/file1.json", "data/flat/file2.json", "data/flat/expected_diff.txt"),
@@ -99,5 +100,43 @@ with open("data/nested/expected_plain_diff.txt") as fh:
 
 @pytest.mark.parametrize("data, expected", [(expected_diff, expected_plain_diff)])
 def test_plain(data, expected):
-    output = format_plain(expected_diff)
-    assert output == expected_plain_diff
+    output = format_plain(data)
+    assert output == expected
+
+
+expected_json_diff = json.dumps({
+    "common [0]":
+        {"follow [1]": False,
+         "setting1 [0]": "Value 1",
+         "setting2 [-1]": 200,
+         "setting3 [-1]": True,
+         "setting3 [1]": None,
+         "setting4 [1]": "blah blah",
+         "setting5 [1]": {"key5 [0]": "value5"},
+         "setting6 [0]": {
+             "doge [0]": {"wow [-1]": "", "wow [1]": "so much"},
+             "key [0]": "value", "ops [1]": "vops"}
+         },
+    "group1 [0]":
+        {"baz [-1]": "bas",
+         "baz [1]": "bars",
+         "foo [0]": "bar",
+         "nest [-1]":
+             {"key [0]": "value"},
+         "nest [1]": "str"
+         },
+    "group2 [-1]":
+        {"abc [0]": 12345,
+         "deep [0]": {"id [0]": 45}
+         },
+    "group3 [1]":
+        {"deep [0]": {"id [0]": {"number [0]": 45}},
+         "fee [0]": 100500
+         }
+})
+
+
+@pytest.mark.parametrize("data, expected", [(expected_diff, expected_json_diff)])
+def test_json(data, expected):
+    output = format_json(data)
+    assert output == expected
