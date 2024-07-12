@@ -2,10 +2,6 @@ from gendiff.json_helpers import read_json
 from gendiff.yml_helpers import read_yml
 
 
-# return diff_ast: TODO: clean up
-# (key, -1, value) -> data is only in 1st file
-# (key, 0, value) -> data is identical in both
-# (key, 1, value) -> data is only in 2d file
 def diff_data(data1: dict, data2: dict) -> dict:
     def _inner_keys_to_tuples(d):
         """ Convert all keys in a dictionary to (k, 0) tuples """
@@ -18,6 +14,16 @@ def diff_data(data1: dict, data2: dict) -> dict:
         return new_d
 
     def _inner_diff(data1: dict, data2: dict, acc: dict = {}):
+        """ Generate dictionary showing the difference between two data,
+            (key, 0) -> no difference for this key
+            (key, -1) -> key exists only in data1
+            (key, 1) -> key exists only in data2
+
+        Args:
+            data1: data to compare
+            data2: data to compare
+            acc: accumulated difference between two data
+        """
         all_keys = set(data1.keys()) | set(data2.keys())
         for key in all_keys:
             # only in data2
@@ -30,12 +36,11 @@ def diff_data(data1: dict, data2: dict) -> dict:
             elif data1[key] == data2[key]:
                 acc[(key, 0)] = _inner_keys_to_tuples(data1[key])
             # values are different
+            elif isinstance(data1[key], dict) and isinstance(data2[key], dict):
+                acc[(key, 0)] = diff_data(data1[key], data2[key])
             else:
-                if isinstance(data1[key], dict) and isinstance(data2[key], dict):
-                    acc[(key, 0)] = diff_data(data1[key], data2[key])
-                else:
-                    acc[(key, -1)] = _inner_keys_to_tuples(data1[key])
-                    acc[(key, 1)] = _inner_keys_to_tuples(data2[key])
+                acc[(key, -1)] = _inner_keys_to_tuples(data1[key])
+                acc[(key, 1)] = _inner_keys_to_tuples(data2[key])
         return acc
 
     return _inner_diff(data1, data2)
@@ -49,7 +54,18 @@ def stylish(data, replacer: str = " ", count: int = 4) -> str:
         replacer: element to indent nested levels
         count: number of replacers for indentation
     Return:
-        formatted string
+        formatted difference between two files, e.g.
+        {
+          - follow: false
+            host: hexlet.io
+          - proxy: 123.234.53.22
+          - timeout: 50
+          + timeout: 20
+          + verbose: true
+        }
+        where "-" means the key is missing in the 2d file,
+                "+" means the key is missing in the 1st file,
+                no sign means that both files have the same value
     """
     def _inner(data, level: int = 1):
         if not isinstance(data, dict):
@@ -86,31 +102,28 @@ def _stringify(value, replacer: str = " ", spaces_count: int = 1):
     return inner_stringify(value)
 
 
-def generate_diff(filepath1: str, filepath2: str) -> str:
+def generate_diff(filepath1: str, filepath2: str, formatter: str = "stylish") -> str:
     """ Generate difference between two json-files
 
     Args:
         filepath1: path to the first file
         filepath2: path to the second file
+        formatter: name of formatter function to be used to produce the output
     Returns:
-        str: difference between two files, e.g.
-        {
-          - follow: false
-            host: hexlet.io
-          - proxy: 123.234.53.22
-          - timeout: 50
-          + timeout: 20
-          + verbose: true
-        }
-        where "-" means the key is missing in the 2d file,
-                "+" means the key is missing in the 1st file,
-                no sign means that both files have the same value
+        str: difference between two files
     """
+    diff = None
     if filepath1.endswith(".json") and filepath2.endswith(".json"):
         diff = diff_data(*read_json(filepath1, filepath2))
-        print(diff)
-        return stylish(diff_data(*read_json(filepath1, filepath2)))
 
     if filepath1.endswith((".yml", ".yaml")) \
             and filepath2.endswith((".yml", ".yaml")):
-        return stylish(diff_data(*read_yml(filepath1, filepath2)))
+        diff = diff_data(*read_yml(filepath1, filepath2))
+
+    formatters = {
+        "stylish": stylish,
+    }
+    if formatter not in formatters:
+        raise NotImplementedError(f"Formatter {formatter} does not exist")
+    formatter_function = formatters[formatter]
+    return formatter_function(diff)
