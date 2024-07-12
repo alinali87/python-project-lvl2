@@ -7,6 +7,7 @@
 
 #### Compare two files
 [![JSON flat](https://asciinema.org/a/nixVrR78lEYLD2QXKqx1gHnje.svg)](https://asciinema.org/a/nixVrR78lEYLD2QXKqx1gHnje)
-[![JSON and YML flat](https://asciinema.org/a/xdAS1nv5WC1xzz7HSBHWlkeKW.svg)](https://asciinema.org/a/xdAS1nv5WC1xzz7HSBHWlkeKW)
+[![JSON and YAML flat](https://asciinema.org/a/xdAS1nv5WC1xzz7HSBHWlkeKW.svg)](https://asciinema.org/a/xdAS1nv5WC1xzz7HSBHWlkeKW)
 [![JSON with stylish format](https://asciinema.org/a/sjor22az20WfiYNsQYpIi9qGS.svg)](https://asciinema.org/a/sjor22az20WfiYNsQYpIi9qGS)
+[![JSON and YAML with plain format](https://asciinema.org/a/5QJwRmgC1AOFHn8UxAwWO5sBU.svg)](https://asciinema.org/a/5QJwRmgC1AOFHn8UxAwWO5sBU)
 
