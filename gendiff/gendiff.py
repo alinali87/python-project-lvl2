@@ -102,13 +102,13 @@ def _stringify(value, replacer: str = " ", spaces_count: int = 1):
     return inner_stringify(value)
 
 
-def generate_diff(filepath1: str, filepath2: str, formatter: str = "stylish") -> str:
+def generate_diff(filepath1: str, filepath2: str, format: str = "stylish") -> str:
     """ Generate difference between two json-files
 
     Args:
         filepath1: path to the first file
         filepath2: path to the second file
-        formatter: name of formatter function to be used to produce the output
+        format: name of formatter function to be used to produce the output
     Returns:
         str: difference between two files
     """
@@ -123,7 +123,7 @@ def generate_diff(filepath1: str, filepath2: str, formatter: str = "stylish") ->
     formatters = {
         "stylish": stylish,
     }
-    if formatter not in formatters:
-        raise NotImplementedError(f"Formatter {formatter} does not exist")
-    formatter_function = formatters[formatter]
-    return formatter_function(diff)
+    if format not in formatters:
+        raise NotImplementedError(f"Format {format} does not exist")
+    format_function = formatters[format]
+    return format_function(diff)
