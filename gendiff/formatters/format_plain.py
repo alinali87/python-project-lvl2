@@ -8,7 +8,7 @@ def _format_value(value) -> str:
     }
     if isinstance(value, dict):
         return "[complex value]"
-    elif value in special_values:
+    elif isinstance(value, bool) or value is None:
         return special_values[value]
     elif isinstance(value, str):
         return f"'{value}'"
