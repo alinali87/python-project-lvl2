@@ -19,16 +19,12 @@ def test_generate_diff(file1, file2, expected_file):
     assert output == expected
 
 
-# TODO: use fixtures
-# TODO: document:
-# -1: add a "-" sign, i.e. present only in 1st
-# 1: add a "+" sign, i.e. present only in 2d
-# 0: add " " sign, but this can mean two things: either present in both, or a key in a nested structure that does not have to be parsed (nested structue is present only in one file)
+# diff data test cases
 with open("data/nested/file1.json") as fh:
     data1 = json.load(fh)
 with open("data/nested/file2.json") as fh:
     data2 = json.load(fh)
-expected_diff = {
+raw_diff = {
     ("common", 0): {
         ("follow", 1): False,
         ("setting1", 0): "Value 1",
@@ -75,13 +71,13 @@ expected_diff = {
 }
 
 
-@pytest.mark.parametrize("data1, data2, expected", [(data1, data2, expected_diff)])
+@pytest.mark.parametrize("data1, data2, expected", [(data1, data2, raw_diff)])
 def test_diff_data(data1, data2, expected):
     output = diff_data(data1, data2)
     assert output == expected
 
 
-# TODO: move tests to fixtures
+# format_stylish test cases
 diff1 = {("a", 0): 1}
 expected1 = "{\n  a: 1\n}"
 diff2 = {("a", -1): {("aaa", 0): 123}, ("b", 1): True}
@@ -89,21 +85,23 @@ expected2 = "{\n  - a: {\n        aaa: 123\n    }\n  + b: true\n}"
 
 
 @pytest.mark.parametrize("data, replacer, count, expected", [(diff1, " ", 2, expected1), (diff2, " ", 4, expected2)])
-def test_stylish(data, replacer, count, expected):
+def test_format_stylish(data, replacer, count, expected):
     output = format_stylish(data, replacer, count)
     assert output == expected
 
 
+# format_plain test cases
 with open("data/nested/expected_plain_diff.txt") as fh:
     expected_plain_diff = fh.read()
 
 
-@pytest.mark.parametrize("data, expected", [(expected_diff, expected_plain_diff)])
-def test_plain(data, expected):
+@pytest.mark.parametrize("data, expected", [(raw_diff, expected_plain_diff)])
+def test_format_plain(data, expected):
     output = format_plain(data)
     assert output == expected
 
 
+# format_json test cases
 expected_json_diff = json.dumps({
     "common [0]":
         {"follow [1]": False,
@@ -136,7 +134,7 @@ expected_json_diff = json.dumps({
 })
 
 
-@pytest.mark.parametrize("data, expected", [(expected_diff, expected_json_diff)])
-def test_json(data, expected):
+@pytest.mark.parametrize("data, expected", [(raw_diff, expected_json_diff)])
+def test_format_json(data, expected):
     output = format_json(data)
     assert output == expected
