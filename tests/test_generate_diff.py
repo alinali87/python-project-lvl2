@@ -51,6 +51,7 @@ raw_diff = {
          ("ops", 1): "vops",
         },
         ("default", -1): None,
+        ("default", 1): "",
     },
     ("group1", 0): {
         ("baz", -1): "bas",
@@ -124,6 +125,7 @@ expected_json_diff = json.dumps({
              "doge [0]": {"wow [-1]": "", "wow [1]": "so much"},
              "key [0]": "value", "ops [1]": "vops"},
          "default [-1]": None,
+         "default [1]": "",
          },
     "group1 [0]":
         {"baz [-1]": "bas",

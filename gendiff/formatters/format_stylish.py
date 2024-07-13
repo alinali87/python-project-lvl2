@@ -30,13 +30,13 @@ def format_stylish(data, replacer: str = " ", count: int = 4) -> str:
         for k, v in sorted(data.items()):
             key, flag = k
             # TODO: clean up
-            if key == "default":
+            if key in ("default", "wow"):
                 print("LEADE:", type(v), v)
 
             sign = {-1: "-", 0: " ", 1: "+"}[flag]
             value = _inner(v, level + 1)
-            hack = replacer * (count * level - 2) + sign + " " + str(key) + ": " + value
-            formatted_list.append(hack.rstrip())
+            formatted_string = replacer * (count * level - 2) + sign + " " + str(key) + ": " + value
+            formatted_list.append(formatted_string)
             # TODO: clean
             # if value:
             #     formatted_list.append(replacer * (count * level - 2) + sign + " " + str(key) + ": " + value)

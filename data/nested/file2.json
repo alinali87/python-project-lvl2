@@ -13,7 +13,8 @@
       "doge": {
         "wow": "so much"
       }
-    }
+    },
+    "default": ""
   },
   "group1": {
     "foo": "bar",
