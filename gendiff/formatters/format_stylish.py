@@ -31,7 +31,7 @@ def format_stylish(data, replacer: str = " ", count: int = 4) -> str:
             key, flag = k
             # TODO: clean up
             if key == "default":
-                print("LEADE:", type(v), v, ord(v))
+                print("LEADE:", type(v), v)
 
             sign = {-1: "-", 0: " ", 1: "+"}[flag]
             value = _inner(v, level + 1)
