@@ -6,6 +6,7 @@ common:
     key: "value"
     doge:
       wow: ""
+  default:
 group1:
   baz: "bas"
   foo: "bar"

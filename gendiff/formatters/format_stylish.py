@@ -31,7 +31,7 @@ def format_stylish(data, replacer: str = " ", count: int = 4) -> str:
             key, flag = k
             sign = {-1: "-", 0: " ", 1: "+"}[flag]
             value = _inner(v, level + 1)
-            if value:
+            if value != "":
                 formatted_list.append(replacer * (count * level - 2) + sign + " " + str(key) + ": " + value)
             else:
                 formatted_list.append(replacer * (count * level - 2) + sign + " " + str(key) + ":")

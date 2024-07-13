@@ -1,4 +1,5 @@
 import json
+import yaml
 import pytest
 from gendiff import generate_diff, diff_data
 from gendiff.formatters.format_stylish import format_stylish
@@ -21,9 +22,15 @@ def test_generate_diff(file1, file2, expected_file):
 
 # diff data test cases
 with open("data/nested/file1.json") as fh:
-    data1 = json.load(fh)
+    data_json_1 = json.load(fh)
 with open("data/nested/file2.json") as fh:
-    data2 = json.load(fh)
+    data_json_2 = json.load(fh)
+with open("data/nested/file1.yml") as fh:
+    data_yaml_1 = yaml.safe_load(fh)
+with open("data/nested/file2.yml") as fh:
+    data_yaml_2 = yaml.safe_load(fh)
+
+
 raw_diff = {
     ("common", 0): {
         ("follow", 1): False,
@@ -42,7 +49,8 @@ raw_diff = {
          },
          ("key", 0): "value",
          ("ops", 1): "vops",
-        }
+        },
+        ("default", -1): None,
     },
     ("group1", 0): {
         ("baz", -1): "bas",
@@ -71,7 +79,8 @@ raw_diff = {
 }
 
 
-@pytest.mark.parametrize("data1, data2, expected", [(data1, data2, raw_diff)])
+@pytest.mark.parametrize("data1, data2, expected", [(data_json_1, data_json_2, raw_diff),
+                                                    (data_yaml_1, data_yaml_2, raw_diff)])
 def test_diff_data(data1, data2, expected):
     output = diff_data(data1, data2)
     assert output == expected
@@ -113,7 +122,8 @@ expected_json_diff = json.dumps({
          "setting5 [1]": {"key5 [0]": "value5"},
          "setting6 [0]": {
              "doge [0]": {"wow [-1]": "", "wow [1]": "so much"},
-             "key [0]": "value", "ops [1]": "vops"}
+             "key [0]": "value", "ops [1]": "vops"},
+         "default [-1]": None,
          },
     "group1 [0]":
         {"baz [-1]": "bas",

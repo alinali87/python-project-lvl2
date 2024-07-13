@@ -8,7 +8,8 @@
       "doge": {
         "wow": ""
       }
-    }
+    },
+    "default": null
   },
   "group1": {
     "baz": "bas",
