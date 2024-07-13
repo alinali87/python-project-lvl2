@@ -40,15 +40,15 @@ raw_diff = {
         ("setting3", 1): None,
         ("setting4", 1): "blah blah",
         ("setting5", 1): {
-         ("key5", 0): "value5",
+            ("key5", 0): "value5",
         },
         ("setting6", 0): {
-         ("doge", 0): {
-             ("wow", -1): "",
-             ("wow", 1): "so much",
-         },
-         ("key", 0): "value",
-         ("ops", 1): "vops",
+            ("doge", 0): {
+                ("wow", -1): "",
+                ("wow", 1): "so much",
+            },
+            ("key", 0): "value",
+            ("ops", 1): "vops",
         },
         ("default", -1): None,
         ("default", 1): "",
