@@ -29,6 +29,10 @@ def format_stylish(data, replacer: str = " ", count: int = 4) -> str:
         formatted_list = ["{"]
         for k, v in sorted(data.items()):
             key, flag = k
+            # TODO: clean up
+            if key == "default":
+                print("LEADE:", type(v), v, ord(v))
+
             sign = {-1: "-", 0: " ", 1: "+"}[flag]
             value = _inner(v, level + 1)
             hack = replacer * (count * level - 2) + sign + " " + str(key) + ": " + value
